@@ -1,0 +1,62 @@
+{
+	"info": {
+		"_postman_id": "aba24ba9-8149-422c-9a67-a7a3c1f14226",
+		"name": "Nest Paginator Examples",
+		"description": "Collection with endpoints to help test nest-paginator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11667809",
+		"_collection_link": "https://bruno-m-personal-team.postman.co/workspace/Main~e7427108-7453-44e7-9ab4-83009f4901e6/collection/11667809-aba24ba9-8149-422c-9a67-a7a3c1f14226?action=share&source=collection_link&creator=11667809"
+	},
+	"item": [
+		{
+			"name": "Batch Mock Users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/users/batch-mock-users",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"users",
+						"batch-mock-users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch All Paginated",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/users/fetch-all-paginated?limit=10&page=8&hasRoute=true",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"users",
+						"fetch-all-paginated"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "8"
+						},
+						{
+							"key": "hasRoute",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

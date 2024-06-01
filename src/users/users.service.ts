@@ -4,6 +4,9 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { faker } from '@faker-js/faker';
+import { makePaginator } from 'nest-paginator';
+import { PaginateQueryDto } from './dto/paginate-query.dto';
+import { PaginatorResult } from 'src/types/pagination';
 
 @Injectable()
 export class UsersService {
@@ -49,5 +52,29 @@ export class UsersService {
     }
 
     return users;
+  }
+
+  private getPaginationRoute(paginateQuery: PaginateQueryDto) {
+    if (!paginateQuery?.hasRoute) {
+      return null;
+    }
+
+    return 'http://localhost:3000/users/fetch-all-paginate';
+  }
+
+  async fetchAllPaginated(
+    paginateQuery: PaginateQueryDto,
+  ): Promise<PaginatorResult<User>> {
+    const { limit = 10, page = 1 } = paginateQuery;
+    const route = this.getPaginationRoute(paginateQuery);
+    const userPaginator = makePaginator<User>();
+
+    const paginationResult = userPaginator.paginate(this.usersRepository, {
+      limit: limit,
+      page: page,
+      route: route,
+    });
+
+    return paginationResult;
   }
 }
