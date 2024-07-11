@@ -12,7 +12,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { PaginateQueryDto } from './dto/paginate-query.dto';
-import { PaginatorResult } from 'src/types/pagination';
 
 @Controller('users')
 export class UsersController {
@@ -29,9 +28,7 @@ export class UsersController {
   }
 
   @Get('/fetch-all-paginated')
-  fetchAllPaginated(
-    @Query() paginateQuery?: PaginateQueryDto,
-  ): Promise<PaginatorResult<User>> {
+  async fetchAllPaginated(@Query() paginateQuery?: PaginateQueryDto) {
     return this.usersService.fetchAllPaginated(paginateQuery);
   }
 
