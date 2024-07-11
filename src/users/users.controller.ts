@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { PaginateQueryDto } from './dto/paginate-query.dto';
 
@@ -18,12 +18,12 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     return this.usersService.findAll();
   }
 
@@ -33,17 +33,17 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
     return this.usersService.findOne(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: string): Promise<void> {
     return this.usersService.remove(id);
   }
 
   @Post('/batch-mock-users')
-  batchMock(@Query('count') count: number): Promise<User[]> {
+  async batchMock(@Query('count') count: number): Promise<UserEntity[]> {
     return this.usersService.batchMockUsers(count);
   }
 }

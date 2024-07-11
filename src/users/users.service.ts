@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { faker } from '@faker-js/faker';
 import { makePaginator } from 'nest-paginator';
 import { PaginateQueryDto } from './dto/paginate-query.dto';
@@ -10,38 +10,47 @@ import { PaginateQueryDto } from './dto/paginate-query.dto';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
-    const user = new User();
-    user.firstName = createUserDto.firstName;
-    user.lastName = createUserDto.lastName;
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+    const user = new UserEntity();
+
+    user.first_name = createUserDto.first_name;
+    user.last_name = createUserDto.last_name;
+    user.email = createUserDto.email;
+    user.address = createUserDto.address;
+    user.state = createUserDto.state;
+    user.zip_code = createUserDto.zip_code;
 
     return this.usersRepository.save(user);
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
   }
 
-  findOne(id: number): Promise<User> {
-    return this.usersRepository.findOneBy({ id: id });
+  async findOne(id: number): Promise<UserEntity> {
+    return this.usersRepository.findOneBy({ user_id: id });
   }
 
   async remove(id: string): Promise<void> {
     await this.usersRepository.delete(id);
   }
 
-  private createUser() {
+  private createUser(): Partial<UserEntity> {
     return {
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
+      address: faker.location.streetAddress(),
+      email: faker.internet.email(),
+      first_name: faker.person.firstName(),
+      last_name: faker.person.lastName(),
+      state: faker.location.state(),
+      zip_code: faker.location.zipCode(),
     };
   }
 
-  async batchMockUsers(count: number = 100): Promise<User[]> {
+  async batchMockUsers(count: number = 100): Promise<UserEntity[]> {
     const users = [];
 
     for (let i = 0; i < count; i++) {
@@ -56,7 +65,7 @@ export class UsersService {
   async fetchAllPaginated(paginateQuery: PaginateQueryDto) {
     try {
       const { limit = 10, page = 1 } = paginateQuery;
-      const userPaginator = makePaginator<User>();
+      const userPaginator = makePaginator<UserEntity>();
 
       const paginationResult = await userPaginator.paginate(
         this.usersRepository,
