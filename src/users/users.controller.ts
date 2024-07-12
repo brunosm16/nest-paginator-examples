@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { PaginateQueryDto } from './dto/paginate-query.dto';
+import { IntDefaultValuePipe } from 'src/pipes/int-default-values.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -32,6 +33,20 @@ export class UsersController {
     return this.usersService.fetchAllPaginated(paginateQuery);
   }
 
+  @Get('/fetch-all-paginated-query-builder')
+  async fetchAllPaginatedQueryBuilder(
+    @Query() paginateQuery?: PaginateQueryDto,
+  ) {
+    return this.usersService.fetchAllPaginatedQueryBuilder(paginateQuery);
+  }
+
+  @Get('/fetch-all-paginated-query-builder-raw')
+  async fetchAllPaginatedQueryBuilderRaw(
+    @Query() paginateQuery?: PaginateQueryDto,
+  ) {
+    return this.usersService.fetchAllPaginatedQueryBuilderRaw(paginateQuery);
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
     return this.usersService.findOne(id);
@@ -43,7 +58,10 @@ export class UsersController {
   }
 
   @Post('/batch-mock-users')
-  async batchMock(@Query('count') count: number): Promise<UserEntity[]> {
+  async batchMock(
+    @Query('count', new IntDefaultValuePipe(undefined)) count?: number,
+  ): Promise<UserEntity[]> {
+    console.log(count);
     return this.usersService.batchMockUsers(count);
   }
 }

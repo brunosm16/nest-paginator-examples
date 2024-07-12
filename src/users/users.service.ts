@@ -55,7 +55,7 @@ export class UsersService {
 
     for (let i = 0; i < count; i++) {
       const user = this.createUser();
-      this.usersRepository.save(user);
+      await this.usersRepository.save(user);
       users.push(user);
     }
 
@@ -74,6 +74,54 @@ export class UsersService {
           page: page,
         },
       );
+
+      return paginationResult;
+    } catch (err) {
+      if (err?.errors) {
+        throw new BadRequestException(err?.errors);
+      }
+      throw err;
+    }
+  }
+
+  async fetchAllPaginatedQueryBuilder(paginateQuery: PaginateQueryDto) {
+    try {
+      const { limit = 10, page = 1 } = paginateQuery;
+      const userPaginator = makePaginator<UserEntity>();
+
+      const queryBuilder = this.usersRepository.createQueryBuilder('u');
+
+      const paginationResult = await userPaginator.paginate(queryBuilder, {
+        limit: limit,
+        page: page,
+      });
+
+      return paginationResult;
+    } catch (err) {
+      if (err?.errors) {
+        throw new BadRequestException(err?.errors);
+      }
+      throw err;
+    }
+  }
+
+  async fetchAllPaginatedQueryBuilderRaw(paginateQuery: PaginateQueryDto) {
+    try {
+      const { limit = 10, page = 1 } = paginateQuery;
+      const userPaginator = makePaginator<UserEntity>();
+
+      const queryBuilder = this.usersRepository
+        .createQueryBuilder('u')
+        .select('u.state', 'state_name')
+        .addSelect('COUNT(u.state)', 'users_state_count')
+        .groupBy('u.state')
+        .orderBy('u.state', 'DESC');
+
+      const paginationResult = await userPaginator.paginate(queryBuilder, {
+        limit: limit,
+        page: page,
+        isRawPagination: true,
+      });
 
       return paginationResult;
     } catch (err) {
