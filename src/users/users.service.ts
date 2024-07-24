@@ -121,6 +121,11 @@ export class UsersService {
         limit: limit,
         page: page,
         isRawPagination: true,
+        query: {
+          where: {
+            state: 'California',
+          },
+        },
       });
 
       return paginationResult;
